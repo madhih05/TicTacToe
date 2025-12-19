@@ -66,7 +66,10 @@ const game = new GameBoard();
 const cellReset = async () => {
     await sleep(2000);
     game.boardReset();
-    cells.forEach((cell) => (cell.innerText = ""));
+    // cells.forEach((cell) => (cell.innerText = ""));
+    cells.forEach((cell) => {
+        cell.classList.remove("x-marker", "o-marker");
+    });
     statusDisplay.innerText = "New Game! Player X starts.";
     game.switchStatus();
 };
@@ -76,7 +79,10 @@ async function handleCellClick(clickedCellEvent) {
     const clickedIndex = clickedCell.getAttribute("data-index");
 
     if (game.board[clickedIndex] === game.EMPTY && game.gameActive) {
-        clickedCell.innerText = game.currentPlayer === game.X ? "X" : "O";
+        // clickedCell.innerText = game.currentPlayer === game.X ? "X" : "O";
+        clickedCell.classList.add(
+            `${game.currentPlayer === game.X ? "x" : "o"}-marker`
+        );
         game.board[clickedIndex] = game.currentPlayer;
         const result = game.whoWin();
         if (result) {
@@ -91,7 +97,7 @@ async function handleCellClick(clickedCellEvent) {
         } else {
             game.switchplayer();
             statusDisplay.innerText = `Player ${
-                game.currentPlayer === game.X ? "O" : "X"
+                game.currentPlayer === game.X ? "X" : "O"
             }'s turn`;
         }
     }

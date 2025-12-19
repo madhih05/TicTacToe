@@ -17,138 +17,83 @@ class GameBoard {
         this.currentPlayer = this.X; // X starts first
     }
 
-    setMove(index) {
-        if (this.board[index] !== this.EMPTY) return false;
-        this.board[index] = this.currentPlayer;
+    switchplayer = (player) => {
         this.currentPlayer = this.currentPlayer === this.X ? this.O : this.X;
-        return true;
-    }
-}
-
-// UI wiring
-document.addEventListener("DOMContentLoaded", () => {
-    const game = new GameBoard();
-    const boardEl = document.getElementById("game-board");
-    const statusEl = document.getElementById("status");
-    const cells = Array.from(boardEl.querySelectorAll(".cell"));
-    let gameOver = false;
-
-    function createX() {
-        const svg = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "svg"
-        );
-        svg.setAttribute("viewBox", "0 0 100 100");
-        svg.classList.add("symbol", "symbol-x");
-        const line1 = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
-        );
-        line1.setAttribute("x1", "20");
-        line1.setAttribute("y1", "20");
-        line1.setAttribute("x2", "80");
-        line1.setAttribute("y2", "80");
-        const line2 = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
-        );
-        line2.setAttribute("x1", "80");
-        line2.setAttribute("y1", "20");
-        line2.setAttribute("x2", "20");
-        line2.setAttribute("y2", "80");
-        svg.appendChild(line1);
-        svg.appendChild(line2);
-        return svg;
-    }
-
-    function createO() {
-        const svg = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "svg"
-        );
-        svg.setAttribute("viewBox", "0 0 100 100");
-        svg.classList.add("symbol", "symbol-o");
-        const circle = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "circle"
-        );
-        circle.setAttribute("cx", "50");
-        circle.setAttribute("cy", "50");
-        circle.setAttribute("r", "35");
-        svg.appendChild(circle);
-        return svg;
-    }
-
-    function renderCell(index) {
-        const cell = cells[index];
-        const inner = cell.querySelector("div") || cell;
-        inner.innerHTML = "";
-        const sym = game.board[index];
-        if (sym === game.X) inner.appendChild(createX());
-        else if (sym === game.O) inner.appendChild(createO());
-    }
-
-    function renderAll() {
-        cells.forEach((_, i) => renderCell(i));
-        updateTurn();
-    }
-
-    function updateTurn() {
-        if (!gameOver) {
-            const playerText = game.currentPlayer === game.X ? "X" : "O";
-            statusEl.textContent = `Player ${playerText}'s turn`;
-            statusEl.className = "status";
-        }
-    }
-
-    function showAnnouncement(message, type) {
-        statusEl.textContent = message;
-        statusEl.className = "status " + type;
-    }
-
-    function resetGame() {
-        game.board = new Array(9).fill(game.EMPTY);
-        game.currentPlayer = game.X;
-        gameOver = false;
-        renderAll();
-    }
-
-    const checkWin = () => {
-        for (let i = 0; i < game.winConditions.length; i++) {
-            const [a, b, c] = game.winConditions[i];
-            const sum = game.board[a] + game.board[b] + game.board[c];
-            if (sum === 3) return 1; // X wins
-            if (sum === -3) return -1; // O wins
-        }
-        // Check for draw
-        if (!game.board.includes(game.EMPTY)) return 2;
-        return 0;
     };
 
-    cells.forEach((cell, index) => {
-        cell.addEventListener("click", () => {
-            if (gameOver) return;
-            const moved = game.setMove(index);
-            if (moved) {
-                renderCell(index);
-                updateTurn();
+    checkWin = () => {
+        for (let condition of this.winConditions) {
+            const sum =
+                this.board[condition[0]] +
+                this.board[condition[1]] +
+                this.board[condition[2]];
+            switch (sum) {
+                case 3:
+                    return this.X; // X wins
+                case -3:
+                    return this.O; // O wins
             }
-            const winner = checkWin();
-            if (winner === 1) {
-                gameOver = true;
-                showAnnouncement("🎉 Player X wins!", "winner-x");
-            } else if (winner === -1) {
-                gameOver = true;
-                showAnnouncement("🎉 Player O wins!", "winner-o");
-            } else if (winner === 2) {
-                gameOver = true;
-                showAnnouncement("It's a draw!", "draw");
-            }
-            if (gameOver) {
-                setTimeout(resetGame, 2500);
-            }
-        });
-    });
+        }
+    };
 
-    renderAll();
-});
+    isDraw = () => {
+        return this.board.includes(this.EMPTY) === false;
+    };
+
+    whoWin = () => {
+        if (!this.isDraw()) {
+            const winner = this.checkWin();
+            switch (winner) {
+                case this.X:
+                    return "X";
+                case this.O:
+                    return "O";
+                default:
+                    return "continue";
+            }
+        }
+        return "draw";
+    };
+
+    boardReset = () => {
+        this.board.fill(this.EMPTY);
+        this.currentPlayer = this.X;
+    };
+}
+
+const cells = document.querySelectorAll(".cell");
+const statusDisplay = document.querySelector(".announcement");
+game = new GameBoard();
+
+const cellReset = () => {
+    game.boardReset();
+    cells.forEach((cell) => (cell.innerText = ""));
+};
+
+function handleCellClick(clickedCellEvent) {
+    const clickedCell = clickedCellEvent.target;
+    const clickedIndex = clickedCell.getAttribute("data-index");
+
+    if (game.board[clickedIndex] === game.EMPTY) {
+        clickedCell.innerText = game.currentPlayer === game.X ? "X" : "O";
+        game.board[clickedIndex] = game.currentPlayer;
+        const result = game.whoWin();
+        switch (result) {
+            case "X":
+                statusDisplay.innerText = "Player X has won!";
+                cellReset();
+                break;
+            case "O":
+                statusDisplay.innerText = "Player O has won!";
+                cellReset();
+                break;
+            case "draw":
+                statusDisplay.innerText = "Game ended in a draw!";
+                cellReset();
+                break;
+        }
+        game.switchplayer();
+        console.log(game.board);
+    }
+}
+cells.forEach((cell) => cell.addEventListener("click", handleCellClick));

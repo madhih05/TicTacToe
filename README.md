@@ -1,17 +1,18 @@
 # Tic Tac Toe
 
-A clean, modern Tic Tac Toe game built with vanilla JavaScript, HTML, and CSS.
+A modern, animated Tic Tac Toe game built with vanilla JavaScript, HTML, and CSS featuring a sleek dark blue theme.
 
 ![Game Preview](https://img.shields.io/badge/Status-Complete-brightgreen)
 
 ## Features
 
 - 🎮 **Two-player gameplay** — X and O take turns
-- ✨ **Animated symbols** — SVG-based X and O with smooth draw animations
+- ✨ **Animated symbols** — CSS-based X and O with smooth draw animations
 - 📱 **Responsive design** — Works on desktop and mobile devices
 - 🏆 **Winner detection** — Automatically detects wins and draws
-- 🔄 **Auto-reset** — Game resets automatically after a win or draw
-- 🎨 **Clean UI** — Minimalist design with hover effects and status indicators
+- 🔄 **Manual restart** — Restart button in the top right corner
+- 🎨 **Dark blue theme** — Modern dark UI with blue accent colors and smooth hover effects
+- 🎯 **Visual feedback** — Cell hover states and animated marker appearance
 
 ## How to Play
 
@@ -19,7 +20,7 @@ A clean, modern Tic Tac Toe game built with vanilla JavaScript, HTML, and CSS.
 2. Player X goes first — click any cell to place your mark
 3. Players alternate turns
 4. First to get 3 in a row (horizontal, vertical, or diagonal) wins!
-5. Game auto-resets after 2.5 seconds
+5. Click "Restart Game" to play again, or wait for auto-reset after 2 seconds
 
 ## Project Structure
 
@@ -34,9 +35,20 @@ TicTacToe/
 ## Tech Stack
 
 - **HTML5** — Semantic markup
-- **CSS3** — Flexbox, Grid, animations, transitions
-- **JavaScript (ES6+)** — Classes, arrow functions, DOM manipulation
-- **SVG** — Scalable vector graphics for X and O symbols
+- **CSS3** — Grid layout, CSS animations, custom properties, pseudo-elements for X and O markers
+- **JavaScript (ES6+)** — Classes, arrow functions, async/await, DOM manipulation
+- **Google Fonts** — Roboto font family
+
+## Design
+
+- **Color Palette**: Dark blue theme with cyan and light blue accents
+  - Background: `#0b1220`
+  - Cells: `#0e1a2f`
+  - X markers: `#60a5fa` (light blue)
+  - O markers: `#22d3ee` (cyan)
+  - Hover state: `#173453` with blue border
+- **Animations**: CSS keyframe animations for drawing X and O symbols
+- **Typography**: Roboto font from Google Fonts
 
 ## Game Logic
 

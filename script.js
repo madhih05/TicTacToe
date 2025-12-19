@@ -18,7 +18,7 @@ class GameBoard {
         this.gameActive = true;
     }
 
-    switchplayer = (player) => {
+    switchplayer = () => {
         this.currentPlayer = this.currentPlayer === this.X ? this.O : this.X;
     };
 
@@ -47,20 +47,10 @@ class GameBoard {
 
     whoWin = () => {
         const winner = this.checkWin();
-        switch (winner) {
-            case this.X:
-                this.switchStatus();
-                return "X";
-            case this.O:
-                this.switchStatus();
-                return "O";
-            default:
-                if (this.isDraw()) {
-                    this.switchStatus();
-                    return "draw";
-                }
-                return false;
-        }
+        if (winner === this.X) return "X";
+        if (winner === this.O) return "O";
+        if (this.isDraw()) return "draw";
+        return false;
     };
 
     boardReset = () => {
@@ -71,7 +61,7 @@ class GameBoard {
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const cells = document.querySelectorAll(".cell");
 const statusDisplay = document.querySelector(".announcement");
-game = new GameBoard();
+const game = new GameBoard();
 
 const cellReset = async () => {
     await sleep(2000);
@@ -81,7 +71,7 @@ const cellReset = async () => {
     game.switchStatus();
 };
 
-function handleCellClick(clickedCellEvent) {
+async function handleCellClick(clickedCellEvent) {
     const clickedCell = clickedCellEvent.target;
     const clickedIndex = clickedCell.getAttribute("data-index");
 
@@ -90,27 +80,20 @@ function handleCellClick(clickedCellEvent) {
         game.board[clickedIndex] = game.currentPlayer;
         const result = game.whoWin();
         if (result) {
-            switch (result) {
-                case "X":
-                    statusDisplay.innerText = "Player X has won!";
-                    cellReset();
-                    break;
-                case "O":
-                    statusDisplay.innerText = "Player O has won!";
-                    cellReset();
-                    break;
-                case "draw":
-                    statusDisplay.innerText = "Game ended in a draw!";
-                    cellReset();
-                    break;
-            }
+            game.switchStatus();
+            const messages = {
+                X: "Player X has won!",
+                O: "Player O has won!",
+                draw: "Game ended in a draw!",
+            };
+            statusDisplay.innerText = messages[result];
+            await cellReset();
         } else {
             game.switchplayer();
             statusDisplay.innerText = `Player ${
                 game.currentPlayer === game.X ? "O" : "X"
             }'s turn`;
         }
-        console.log(game.board);
     }
 }
 cells.forEach((cell) => cell.addEventListener("click", handleCellClick));

@@ -71,7 +71,7 @@ const cellReset = async (waitTime) => {
         cell.classList.remove("x-marker", "o-marker");
     });
     statusDisplay.innerText = "Player X starts.";
-    game.switchStatus();
+    game.gameActive = true;
 };
 
 async function handleCellClick(clickedCellEvent) {

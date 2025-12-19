@@ -7,13 +7,14 @@ body {
     justify-content: center;
     align-items: center;
     height: 100dvh;
-    background-color: black;
+    background-color: #0b1220;
 }
 
 .container {
     width: 90%;
     max-width: 750px;
     margin: auto;
+    position: relative;
 }
 
 .container h1,
@@ -21,7 +22,34 @@ body {
     font-family: 'Roboto', sans-serif;
     text-align: center;
     font-weight: bold;
-    color: white;
+    color: #e6f2ff;
+}
+
+.announcement {
+    background-color: #0e1a2f;
+    padding: 1rem;
+    width: fit-content;
+    margin: 2rem auto;
+    border-radius: 1rem;
+}
+
+.restart-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #1e3a8a;
+    color: #e6f2ff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.restart-btn:hover {
+    background-color: #1e40af;
 }
 
 .cell {
@@ -31,15 +59,15 @@ body {
     min-height: 100px;
     min-width: 100px;
     border-radius: 2rem;
-    background-color: #101010;
+    background-color: #0e1a2f;
     -webkit-tap-highlight-color: transparent;
-    color: white;
+    color: #e6f2ff;
 }
 
 .cell:hover {
-    background-color: #272727;
+    background-color: #173453;
     cursor: pointer;
-    border: solid 2px blue
+    border: solid 2px #3b82f6;
 }
 
 .x-marker {
@@ -66,7 +94,7 @@ body {
     left: 50%;
     width: 80%;
     height: 10%;
-    background-color: red;
+    background-color: #60a5fa;
     border-radius: 5px;
     animation: draw-cross 0.3s ease forwards;
 }
@@ -106,7 +134,7 @@ body {
     height: 60%;
     transform: translate(-50%, -50%);
     background-color: transparent;
-    border: 20px solid green;
+    border: 20px solid #22d3ee;
     border-radius: 50%;
     animation: draw-circle 0.3s ease-out forwards;
 }
@@ -134,4 +162,16 @@ body {
         font-size: 2rem;
         margin-top: 20px;
     }
+}
+
+.X-win {
+    background-color: #164e63;
+}
+
+.O-win {
+    background-color: #134e4a;
+}
+
+.draw-win {
+    background-color: #403d3d;
 }

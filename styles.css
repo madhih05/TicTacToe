@@ -1,126 +1,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-.container {
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: white;
-    min-height: 100vh;
+body {
+    margin: 0;
+    padding: 0;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100dvh;
 }
 
-h1 {
-    text-align: center;
+.container {
+    width: 90%;
+    max-width: 750px;
+    margin: auto;
+}
+
+.container h1,
+.container .announcement {
     font-family: 'Roboto', sans-serif;
-}
-
-.status {
     text-align: center;
-    font-family: 'Roboto', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 700;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 1rem;
-    min-height: 1.5rem;
-    transition: all 0.3s ease;
-}
-
-.game-board {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-    max-width: 700px;
+    font-weight: bold;
 }
 
 .cell {
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1 / 1;
-    background-color: white;
+    min-height: 100px;
+    min-width: 100px;
     border-radius: 2rem;
-    min-width: 226px;
+    background-color: whitesmoke;
 }
 
 .cell:hover {
-    background-color: #f0f0f0;
-}
-
-/* Status modifiers for win/draw */
-.status.winner-x {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.status.winner-o {
-    background-color: #cce5ff;
-    color: #004085;
-}
-
-.status.draw {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-/* Animated X and O */
-.symbol {
-    width: 60%;
-    height: 60%;
-}
-
-.symbol-x line {
-    stroke: #e74c3c;
-    stroke-width: 12;
-    stroke-linecap: round;
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    animation: draw-x 0.4s ease forwards;
-}
-
-.symbol-o circle {
-    fill: none;
-    stroke: #3498db;
-    stroke-width: 12;
-    stroke-linecap: round;
-    stroke-dasharray: 283;
-    stroke-dashoffset: 283;
-    animation: draw-o 0.4s ease forwards;
-}
-
-@keyframes draw-x {
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-@keyframes draw-o {
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-/* Reset button */
-.reset-btn {
-    font-family: 'Roboto', sans-serif;
-    font-size: 1rem;
-    padding: 0.75rem 2rem;
-    margin-top: 1.5rem;
-    border: none;
-    border-radius: 0.5rem;
-    background-color: #333;
-    color: white;
+    background-color: lightgray;
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
-.reset-btn:hover {
-    background-color: #555;
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 100%;
+    max-width: 700px;
+    margin: auto;
+    aspect-ratio: 1/1;
+    gap: 0.5rem;
+    border-radius: 2rem;
 }

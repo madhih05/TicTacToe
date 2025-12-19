@@ -15,10 +15,15 @@ class GameBoard {
             [2, 4, 6],
         ]; // Winning combinations
         this.currentPlayer = this.X; // X starts first
+        this.gameActive = true;
     }
 
     switchplayer = (player) => {
         this.currentPlayer = this.currentPlayer === this.X ? this.O : this.X;
+    };
+
+    switchStatus = () => {
+        this.gameActive = !this.gameActive;
     };
 
     checkWin = () => {
@@ -41,18 +46,21 @@ class GameBoard {
     };
 
     whoWin = () => {
-        if (!this.isDraw()) {
-            const winner = this.checkWin();
-            switch (winner) {
-                case this.X:
-                    return "X";
-                case this.O:
-                    return "O";
-                default:
-                    return "continue";
-            }
+        const winner = this.checkWin();
+        switch (winner) {
+            case this.X:
+                this.switchStatus();
+                return "X";
+            case this.O:
+                this.switchStatus();
+                return "O";
+            default:
+                if (this.isDraw()) {
+                    this.switchStatus();
+                    return "draw";
+                }
+                return false;
         }
-        return "draw";
     };
 
     boardReset = () => {
@@ -60,39 +68,48 @@ class GameBoard {
         this.currentPlayer = this.X;
     };
 }
-
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const cells = document.querySelectorAll(".cell");
 const statusDisplay = document.querySelector(".announcement");
 game = new GameBoard();
 
-const cellReset = () => {
+const cellReset = async () => {
+    await sleep(2000);
     game.boardReset();
     cells.forEach((cell) => (cell.innerText = ""));
+    statusDisplay.innerText = "New Game! Player X starts.";
+    game.switchStatus();
 };
 
 function handleCellClick(clickedCellEvent) {
     const clickedCell = clickedCellEvent.target;
     const clickedIndex = clickedCell.getAttribute("data-index");
 
-    if (game.board[clickedIndex] === game.EMPTY) {
+    if (game.board[clickedIndex] === game.EMPTY && game.gameActive) {
         clickedCell.innerText = game.currentPlayer === game.X ? "X" : "O";
         game.board[clickedIndex] = game.currentPlayer;
         const result = game.whoWin();
-        switch (result) {
-            case "X":
-                statusDisplay.innerText = "Player X has won!";
-                cellReset();
-                break;
-            case "O":
-                statusDisplay.innerText = "Player O has won!";
-                cellReset();
-                break;
-            case "draw":
-                statusDisplay.innerText = "Game ended in a draw!";
-                cellReset();
-                break;
+        if (result) {
+            switch (result) {
+                case "X":
+                    statusDisplay.innerText = "Player X has won!";
+                    cellReset();
+                    break;
+                case "O":
+                    statusDisplay.innerText = "Player O has won!";
+                    cellReset();
+                    break;
+                case "draw":
+                    statusDisplay.innerText = "Game ended in a draw!";
+                    cellReset();
+                    break;
+            }
+        } else {
+            game.switchplayer();
+            statusDisplay.innerText = `Player ${
+                game.currentPlayer === game.X ? "O" : "X"
+            }'s turn`;
         }
-        game.switchplayer();
         console.log(game.board);
     }
 }

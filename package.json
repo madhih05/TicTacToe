@@ -1,0 +1,26 @@
+{
+  "name": "tictactoe",
+  "version": "1.0.0",
+  "description": "A modern, animated Tic Tac Toe game built with vanilla JavaScript, HTML, and CSS featuring a sleek dark blue theme.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madhih05/TicTacToe.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/madhih05/TicTacToe/issues"
+  },
+  "homepage": "https://github.com/madhih05/TicTacToe#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "socket.io": "^4.8.1"
+  }
+}

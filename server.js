@@ -1,108 +1,129 @@
 const express = require("express");
 const app = express();
+
 const http = require("http");
 const server = http.createServer(app);
+
 const { Server } = require("socket.io");
 const io = new Server(server);
 
 app.use(express.static("public"));
 
-class GameBoard {
-    constructor(x, o) {
-        this.X = 1; // Represent X with 1
-        this.O = -1; // Represent O with -1
-        this.EMPTY = 0; // Represent empty cell with 0
-        this.board = new Array(9).fill(this.EMPTY); // 3x3 board represented as a flat array
-        this.winConditions = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6],
-        ]; // Winning combinations
-        this.currentPlayer = this.X; // X starts first
-        this.gameActive = true;
-        this.xPlayer = x;
-        this.oPlayer = o;
-        this.winner = null;
-    }
+let rooms = {};
+// has 2 values in each an array of players called players,
+// and a room id number called roomId
 
-    switchplayer = () => {
-        this.currentPlayer = this.currentPlayer === this.X ? this.O : this.X;
-    };
+checkWin = (board) => {
+    const winConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
 
-    switchStatus = () => {
-        this.gameActive = !this.gameActive;
-    };
+    for (let condition of winConditions) {
+        const [a, b, c] = condition;
 
-    checkWin = () => {
-        for (let condition of this.winConditions) {
-            const sum =
-                this.board[condition[0]] +
-                this.board[condition[1]] +
-                this.board[condition[2]];
-            switch (sum) {
-                case 3:
-                    return this.X; // X wins
-                case -3:
-                    return this.O; // O wins
-            }
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            return board[a];
         }
-    };
+    }
+    return false;
+};
 
-    isDraw = () => {
-        return this.board.includes(this.EMPTY) === false;
-    };
-
-    whoWin = () => {
-        const winner = this.checkWin();
-        if (winner === this.X) return "X";
-        if (winner === this.O) return "O";
-        if (this.isDraw()) return "draw";
-        return false;
-    };
-
-    boardReset = () => {
-        this.board.fill(this.EMPTY);
-        this.currentPlayer = this.X;
-    };
-}
-
-let rooms = {}; // has 2 values in each an array of players called players, and a room id number called roomId
+checkDraw = (board) => {
+    return board.includes(0) ? false : true;
+};
 
 io.on("connection", (socket) => {
     console.log("a user connected:", socket.id);
-    roomID = null;
+
+    let roomID = null;
+
     for (let id in rooms) {
         if (rooms[id].players.length === 1) {
             roomID = rooms[id].roomId;
             rooms[id].players.push(socket.id);
+
             socket.join(roomID);
             io.to(roomID).emit("start game", { roomId: roomID });
-            game = new GameBoard(rooms[id].players[0], rooms[id].players[1]);
-            rooms[id].game = game;
+
             console.log(rooms);
+
+            socket.emit("game ready", { marker: "o" });
+            socket.to(rooms[id].players[0]).emit("game ready", { marker: "x" });
+
             break;
         }
-        break;
     }
+
     if (roomID === null) {
         roomID = `room-${socket.id}`;
+
         rooms[roomID] = {
             roomId: roomID,
             players: [socket.id],
-            game: null,
+            game: Array(9).fill(0),
+            currentMove: 0,
         };
-        socket.join(roomID);
-    }
-});
 
-io.on("disconnect", () => {
-    console.log("user disconnected:", socket.id);
-    // Handle user disconnection logic here
+        socket.join(roomID);
+        socket.emit("waiting for opponent");
+    }
+
+    socket.on("player move", (data) => {
+        const room = rooms[roomID];
+        if (!room) return;
+
+        const playerIndex = room.players.indexOf(socket.id);
+        if (playerIndex !== room.currentMove) {
+            return;
+        }
+
+        playerMarker = playerIndex === 0 ? "x" : "o";
+        room.game[data.index] = playerMarker;
+
+        opponentIndex = playerIndex === 0 ? 1 : 0;
+        opponentSocketId = room.players[opponentIndex];
+
+        io.to(opponentSocketId).emit("player move", {
+            index: data.index,
+            marker: playerMarker,
+        });
+
+        console.log(room.game);
+
+        room.currentMove = opponentIndex;
+        socket.emit("move ack", room.currentMove);
+
+        const winner = checkWin(room.game);
+        if (winner) {
+            io.to(roomID).emit("game won", { winner: winner });
+            rooms[roomID].game = Array(9).fill(0);
+            rooms[roomID].currentMove = 0;
+        }
+        if (checkDraw(room.game)) {
+            rooms[roomID].game = Array(9).fill(0);
+            rooms[roomID].currentMove = 0;
+            io.to(roomID).emit("game draw");
+        }
+    });
+    socket.on("disconnect", () => {
+        console.log("user disconnected:", socket.id);
+
+        const room = rooms[roomID];
+        opponentSocketId =
+            room.players.indexOf(socket.id) === 0
+                ? room.players[1]
+                : room.players[0];
+        io.to(opponentSocketId).emit("opponent disconnected");
+
+        // Handle user disconnection logic here
+    });
 });
 
 server.listen(3000, () => {

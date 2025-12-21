@@ -174,3 +174,7 @@ body {
 .draw-win {
     background-color: #403d3d;
 }
+
+.lost {
+    background-color: #d38e8e;
+}

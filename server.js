@@ -112,19 +112,27 @@ io.on("connection", (socket) => {
             io.to(roomID).emit("game draw");
         }
     });
-    socket.on("disconnect", () => {
+
+    const disconnectHandler = () => {
         console.log("user disconnected:", socket.id);
 
         const room = rooms[roomID];
-        opponentSocketId =
+        if (!room || !room.players) return;
+
+        const opponentSocketId =
             room.players.indexOf(socket.id) === 0
                 ? room.players[1]
                 : room.players[0];
-        io.to(opponentSocketId).emit("opponent disconnected");
-        delete rooms[roomID];
 
-        // Handle user disconnection logic here
-    });
+        if (opponentSocketId) {
+            io.to(opponentSocketId).emit("opponent disconnected");
+        }
+
+        delete rooms[roomID];
+    };
+
+    socket.on("disconnect", disconnectHandler);
+    socket.on("disconnected", disconnectHandler);
 });
 
 server.listen(3000, () => {

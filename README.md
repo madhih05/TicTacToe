@@ -39,7 +39,7 @@ A modern, multiplayer Tic Tac Toe game with real-time networking. Built with van
 2. Player X goes first — click any cell to place your mark
 3. Players alternate turns in real-time
 4. First to get 3 in a row (horizontal, vertical, or diagonal) wins!
-5. Click "Restart Game" to play again
+5. Click "Restart Game" to quit game and start a new game
 
 ## Project Structure
 
@@ -85,25 +85,7 @@ The board is represented as a flat array of 9 cells:
  6 | 7 | 8
 ```
 
-- `1` represents X
-- `-1` represents O  
-- `0` represents an empty cell
-
-Win detection uses sum checking: if any row/column/diagonal sums to `3`, X wins; if `-3`, O wins.
-
-## Running Locally
-
-Simply open the `index.html` file in any modern browser:
-
-```bash
-# Using Python's built-in server
-python3 -m http.server 8000
-
-# Or with Node.js
-npx serve .
-```
-
-Then visit `http://localhost:8000`
+Win detection uses sum checking: if any row/column/diagonal has the same marking that and also not empty
 
 ## License
 

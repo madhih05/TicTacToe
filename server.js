@@ -121,6 +121,7 @@ io.on("connection", (socket) => {
                 ? room.players[1]
                 : room.players[0];
         io.to(opponentSocketId).emit("opponent disconnected");
+        delete rooms[roomID];
 
         // Handle user disconnection logic here
     });

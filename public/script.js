@@ -49,6 +49,13 @@ async function handleCellClick(clickedCellEvent) {
     });
 }
 
+restartgame = async () => {
+    statusDisplay.classList.toggle("draw-win");
+    statusDisplay.innerHTML = "You quit, Restarting game...";
+    await sleep(2000);
+    window.location.reload();
+};
+
 cells.forEach((cell) => cell.addEventListener("click", handleCellClick));
 
 // ============================================================================

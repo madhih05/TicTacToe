@@ -50,6 +50,7 @@ async function handleCellClick(clickedCellEvent) {
 }
 
 restartgame = async () => {
+    socket.emit("disconnected");
     statusDisplay.classList.toggle("draw-win");
     statusDisplay.innerHTML = "You quit, Restarting game...";
     await sleep(2000);
